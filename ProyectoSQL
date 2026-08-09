@@ -1,15 +1,11 @@
 
--- Tabla de traducción de categorías (cargarla primero, no depende de nada)
+-- Tabla de traducción de categorías 
 CREATE TABLE product_category_translation (
     product_category_name VARCHAR(100),
     product_category_name_english VARCHAR(100)
 );
 
 -- Clientes
--- Nota: esta tabla tiene DOS identificadores distintos.
--- customer_id genera uno nuevo por CADA COMPRA (aunque sea el mismo cliente).
--- customer_unique_id sí identifica a la misma persona a través de sus distintas compras.
--- Esto importa más adelante en la sección RFM.
 CREATE TABLE customers (
     customer_id VARCHAR(50) PRIMARY KEY,
     customer_unique_id VARCHAR(50),
@@ -83,7 +79,7 @@ CREATE TABLE order_reviews (
     review_answer_timestamp TIMESTAMP
 );
 
--- Geolocalización (opcional, la más pesada, podés dejarla para después)
+-- Geolocalización 
 CREATE TABLE geolocation (
     geolocation_zip_code_prefix VARCHAR(10),
     geolocation_lat NUMERIC(10,6),
@@ -93,9 +89,6 @@ CREATE TABLE geolocation (
 );
 
 --Verificacion de importacion
--- UNION ALL apila el resultado de varios SELECT (mismo número de columnas)
--- en una sola salida, para chequear de un vistazo que ninguna tabla haya
--- quedado vacía o a medio cargar.
 SELECT 'customers' AS tabla, COUNT(*) AS filas FROM customers
 UNION ALL
 SELECT 'sellers', COUNT(*) FROM sellers
@@ -186,7 +179,7 @@ SELECT customers.customer_unique_id,SUM(order_items.price) as total_gastos
 From order_items
 join orders on order_items.order_id=orders.order_id
 join customers on orders.customer_id=customers.customer_id
-group by customers.customer_id,order_items.price
+group by customers.customer_unique_id
 order by total_gastos desc;
 
 -- Recency — hace cuántos días fue la última compra de cada cliente.
